@@ -32,8 +32,8 @@ def print_label(qr_code_data_1, qr_code_data_2, insert_title, insert_text_1, ins
             zip_ref.extractall(temp_dir)
 
         # Replace images
-        shutil.copy2(generate_qr(qr_code_data_1), os.path.join(temp_dir, "word/media/image1.png"))
-        shutil.copy2(generate_qr(qr_code_data_2), os.path.join(temp_dir, "word/media/image2.png"))
+        shutil.copy2(generate_qr(qr_code_data_2), os.path.join(temp_dir, "word/media/image1.png"))
+        shutil.copy2(generate_qr(qr_code_data_1), os.path.join(temp_dir, "word/media/image2.png"))
 
         # Replace text in document.xml
         doc_xml_path = os.path.join(temp_dir, "word/document.xml")
