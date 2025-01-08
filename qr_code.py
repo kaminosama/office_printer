@@ -16,7 +16,7 @@ def generate_qr(data, qr_size=540):
     )
     qr.add_data(data)
     qr.make(fit=True)
-    qr_img = qr.make_image(fill_color="#06c655", back_color="white")
+    qr_img = qr.make_image(fill_color="black", back_color="white")
     qr_img = qr_img.resize((qr_size, qr_size), Image.Resampling.LANCZOS)
     temp_dir = tempfile.mkdtemp()
     qr_path = os.path.join(temp_dir, "qr.png")
