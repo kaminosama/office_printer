@@ -12,4 +12,4 @@ def printer(file_path):
     file_name_without_suffix = os.path.split(file_path)[-1].split(".")[0]
     with tempfile.TemporaryDirectory() as tmpdirname:
         os.system(f"libreoffice --headless --convert-to pdf {file_path} --outdir {tmpdirname}" 
-                  f"&& lp {os.path.join(tmpdirname, file_name_without_suffix + ".pdf")} -d Label_Printer_M4201")
+                  f"&& lp {os.path.join(tmpdirname, file_name_without_suffix + '.pdf')} -d Label_Printer_M4201")
