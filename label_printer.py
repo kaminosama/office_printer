@@ -1,18 +1,42 @@
-import os
-import sys
 from qr_code import generate_qr
 from urllib.parse import quote_plus
+import tempfile
+import os
+import requests
+import uuid
 
-if sys.platform.startswith("win"):
-    from utils.windows_print import printer
-elif sys.platform == "linux":
-    from utils.linux_print import printer
-else:
-    raise Exception("Unsupported platform")
+
+def printer(file_path, printer="Brother_MFC_J2740DW"):
+    """
+    Prints a label from the file 'label.docx' using the specified printer.
+    Args:
+        file_path (str): The path to the 'label.docx' file.
+        printer_name (str): The name of the printer to use.
+    """
+    if printer not in ["Brother_MFC_J2740DW", "Label_Printer_M4201"]:
+        raise ValueError(f"Invalid printer name: {printer}")
+    file_name_without_suffix = os.path.split(file_path)[-1].split(".")[0]
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        if file_path.endswith(".docx"):
+            os.system(f"libreoffice --headless --convert-to pdf {file_path} --outdir {tmpdirname}")
+            os.system(f"lp {os.path.join(tmpdirname, file_name_without_suffix + '.pdf')} -d {printer}")
+        elif file_path.endswith(".pdf"):
+            os.system(f"lp {file_path} -d {printer}")
+        else:
+            raise ValueError(f"Invalid file type: {file_path}")
 
 
 def generate_line_url(data):
     return "https://line.me/R/oaMessage/%40nomadnest/?" + quote_plus(data)
+
+
+def print_pdf(file_url, printer="Brother_MFC_J2740DW"):
+    filename = f"{uuid.uuid4()}.pdf"
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        response = requests.get(file_url)
+        with open(os.path.join(tmpdirname, filename), "wb") as f:
+            f.write(response.content)
+        printer(os.path.join(tmpdirname, filename), printer)
 
 
 def print_label(qr_code_data_1, qr_code_data_2, insert_title, insert_text_1, insert_text_2, template_path="label.docx"):
@@ -57,7 +81,7 @@ def print_label(qr_code_data_1, qr_code_data_2, insert_title, insert_text_1, ins
                         docx.write(file_path, arcname)
 
         # Print the label
-        printer(temp_output)
+        printer(temp_output, printer="Label_Printer_M4201")
 
     finally:
         # Cleanup all temporary files
