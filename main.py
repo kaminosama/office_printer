@@ -14,32 +14,35 @@ def print_label_view(qrData1: Union[str, None] = None, qrData2: Union[str, None]
 
 
 @app.get("/print")
-def print_pdf_view(file_url: str, printer: Union[str, None] = None):
+def print_view(file_url: str, printer: Union[str, None] = None):
     printer = printer or "Brother_MFC_J2740DW"
     print_file(file_url, printer)
     return {"message": "PDF printed successfully"}
 
 @app.post("/print")
-async def print_pdf_upload(pdf_file: UploadFile = File(...), printer: Union[str, None] = None):
+async def print_view(file: UploadFile = File(...), printer: Union[str, None] = None):
     printer = printer or "Brother_MFC_J2740DW"
-    if not pdf_file.filename.lower().endswith('.pdf'):
-        return {"error": "Uploaded file must be a PDF"}
     
     # Read the uploaded file content
-    content = await pdf_file.read()
+    content = await file.read()
     
     # Create a temporary file and print it
     import tempfile
     import os
     
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
-        temp_pdf.write(content)
-        temp_path = temp_pdf.name
+    # Get the file extension from the original filename
+    file_extension = os.path.splitext(file.filename)[1]
+    if not file_extension:
+        return {"error": "Invalid file type"}
+    
+    with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+        temp_file.write(content)
+        temp_path = temp_file.name
     
     try:
         print_file(temp_path, printer)
         os.unlink(temp_path)  # Clean up the temporary file
-        return {"message": "PDF printed successfully"}
+        return {"message": "File printed successfully"}
     except Exception as e:
         os.unlink(temp_path)  # Clean up the temporary file even if printing fails
-        return {"error": f"Failed to print PDF: {str(e)}"}
+        return {"error": f"Failed to print file: {str(e)}"}

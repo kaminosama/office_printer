@@ -3,25 +3,24 @@ from urllib.parse import quote_plus
 import tempfile
 import os
 import requests
-import uuid
 
 
-def printer(file_path, printer="Brother_MFC_J2740DW"):
+def printer(file_path, printer_name="Brother_MFC_J2740DW"):
     """
     Prints a label from the file 'label.docx' using the specified printer.
     Args:
         file_path (str): The path to the 'label.docx' file.
         printer_name (str): The name of the printer to use.
     """
-    if printer not in ["Brother_MFC_J2740DW", "Label_Printer_M4201"]:
-        raise ValueError(f"Invalid printer name: {printer}")
+    if printer_name not in ["Brother_MFC_J2740DW", "Label_Printer_M4201"]:
+        raise ValueError(f"Invalid printer name: {printer_name}")
     file_name_without_suffix = os.path.split(file_path)[-1].split(".")[0]
     with tempfile.TemporaryDirectory() as tmpdirname:
         if file_path.endswith(".docx"):
             os.system(f"libreoffice --headless --convert-to pdf {file_path} --outdir {tmpdirname}")
-            os.system(f"lp {os.path.join(tmpdirname, file_name_without_suffix + '.pdf')} -d {printer}")
+            os.system(f"lp {os.path.join(tmpdirname, file_name_without_suffix + '.pdf')} -d {printer_name}")
         elif file_path.endswith(".pdf"):
-            os.system(f"lp {file_path} -d {printer}")
+            os.system(f"lp {file_path} -d {printer_name}")
         else:
             raise ValueError(f"Invalid file type: {file_path}")
 
@@ -30,15 +29,15 @@ def generate_line_url(data):
     return "https://line.me/R/oaMessage/%40nomadnest/?" + quote_plus(data)
 
 
-def print_file(file_url, printer="Brother_MFC_J2740DW"):
+def print_file(file_url, printer_name="Brother_MFC_J2740DW"):
     if file_url.startswith("http"):
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
             response = requests.get(file_url)
             with open(temp_pdf.name, "wb") as f:
                 f.write(response.content)
-            printer(temp_pdf.name, printer=printer)
+            printer(temp_pdf.name, printer_name=printer_name)
     else:
-        printer(file_url, printer=printer)
+        printer(file_url, printer_name=printer_name)
 
 
 def print_label(qr_code_data_1, qr_code_data_2, insert_title, insert_text_1, insert_text_2, template_path="label.docx"):
