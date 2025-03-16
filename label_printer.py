@@ -30,13 +30,15 @@ def generate_line_url(data):
     return "https://line.me/R/oaMessage/%40nomadnest/?" + quote_plus(data)
 
 
-def print_pdf(file_url):
-    filename = f"{uuid.uuid4()}.pdf"
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        response = requests.get(file_url)
-        with open(os.path.join(tmpdirname, filename), "wb") as f:
-            f.write(response.content)
-        printer(os.path.join(tmpdirname, filename), printer="Brother_MFC_J2740DW")
+def print_file(file_url, printer="Brother_MFC_J2740DW"):
+    if file_url.startswith("http"):
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
+            response = requests.get(file_url)
+            with open(temp_pdf.name, "wb") as f:
+                f.write(response.content)
+            printer(temp_pdf.name, printer=printer)
+    else:
+        printer(file_url, printer=printer)
 
 
 def print_label(qr_code_data_1, qr_code_data_2, insert_title, insert_text_1, insert_text_2, template_path="label.docx"):
