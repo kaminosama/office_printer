@@ -1,5 +1,5 @@
 from typing import Union
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, Form, UploadFile, File
 from label_printer import print_label, print_file
 
 app = FastAPI()
@@ -20,7 +20,7 @@ def print_view(file_url: str, color: str = "true", printer: Union[str, None] = N
     return {"message": "PDF printed successfully"}
 
 @app.post("/print")
-async def print_view(file: UploadFile = File(...), color: str = "true", printer: Union[str, None] = None):
+async def print_view(file: UploadFile = File(...), color: str = Form("true"), printer: Union[str, None] = Form(None)):
     printer = printer or "Brother_MFC_J2740DW"
     
     # Read the uploaded file content
