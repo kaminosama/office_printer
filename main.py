@@ -14,13 +14,13 @@ def print_label_view(qrData1: Union[str, None] = None, qrData2: Union[str, None]
 
 
 @app.get("/print")
-def print_view(file_url: str, printer: Union[str, None] = None):
+def print_view(file_url: str, color: str = "true", printer: Union[str, None] = None):
     printer = printer or "Brother_MFC_J2740DW"
-    print_file(file_url, printer)
+    print_file(file_url, True if color == "true" else False, printer)
     return {"message": "PDF printed successfully"}
 
 @app.post("/print")
-async def print_view(file: UploadFile = File(...), printer: Union[str, None] = None):
+async def print_view(file: UploadFile = File(...), color: str = "true", printer: Union[str, None] = None):
     printer = printer or "Brother_MFC_J2740DW"
     
     # Read the uploaded file content
@@ -40,7 +40,7 @@ async def print_view(file: UploadFile = File(...), printer: Union[str, None] = N
         temp_path = temp_file.name
     
     try:
-        print_file(temp_path, printer)
+        print_file(temp_path, True if color == "true" else False, printer)
         os.unlink(temp_path)  # Clean up the temporary file
         return {"message": "File printed successfully"}
     except Exception as e:
