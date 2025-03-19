@@ -18,9 +18,9 @@ def printer(file_path, color, printer_name="Brother_MFC_J2740DW"):
     with tempfile.TemporaryDirectory() as tmpdirname:
         if file_path.endswith(".docx"):
             os.system(f"libreoffice --headless --convert-to pdf {file_path} --outdir {tmpdirname}")
-            os.system(f"lp {os.path.join(tmpdirname, file_name_without_suffix + '.pdf')} -d {printer_name} -o ColorModel={"RGB" if color else "Gray"}")
+            os.system(f"lp {os.path.join(tmpdirname, file_name_without_suffix + '.pdf')} -d {printer_name} -o ColorModel={'RGB' if color else 'Gray'}")
         elif file_path.endswith(".pdf"):
-            os.system(f"lp {file_path} -d {printer_name} -o ColorModel={"RGB" if color else "Gray"}")
+            os.system(f"lp {file_path} -d {printer_name} -o ColorModel={'RGB' if color else 'Gray'}")
         else:
             raise ValueError(f"Invalid file type: {file_path}")
 
