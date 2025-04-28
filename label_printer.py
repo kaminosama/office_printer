@@ -5,14 +5,14 @@ import os
 import requests
 
 
-def printer(file_path, color, printer_name="Brother_MFC_J2740DW"):
+def printer(file_path, color, printer_name="Brother_MFC-J2740DW"):
     """
     Prints a label from the file 'label.docx' using the specified printer.
     Args:
         file_path (str): The path to the 'label.docx' file.
         printer_name (str): The name of the printer to use.
     """
-    if printer_name not in ["Brother_MFC_J2740DW", "Label_Printer_M4201"]:
+    if printer_name not in ["Brother_MFC-J2740DW", "Label_Printer_M4201"]:
         raise ValueError(f"Invalid printer name: {printer_name}")
     file_name_without_suffix = os.path.split(file_path)[-1].split(".")[0]
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -29,7 +29,7 @@ def generate_line_url(data):
     return "https://line.me/R/oaMessage/%40nomadnest/?" + quote_plus(data)
 
 
-def print_file(file_url, color, printer_name="Brother_MFC_J2740DW"):
+def print_file(file_url, color, printer_name="Brother_MFC-J2740DW"):
     if file_url.startswith("http"):
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
             response = requests.get(file_url)

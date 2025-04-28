@@ -15,13 +15,13 @@ def print_label_view(qrData1: Union[str, None] = None, qrData2: Union[str, None]
 
 @app.get("/print")
 def print_view(file_url: str, color: str = "true", printer: Union[str, None] = None):
-    printer = printer or "Brother_MFC_J2740DW"
+    printer = printer or "Brother_MFC-J2740DW"
     print_file(file_url, True if color == "true" else False, printer)
     return {"message": "PDF printed successfully"}
 
 @app.post("/print")
 async def print_view(file: UploadFile = File(...), color: str = Form("true"), printer: Union[str, None] = Form(None)):
-    printer = printer or "Brother_MFC_J2740DW"
+    printer = printer or "Brother_MFC-J2740DW"
     
     # Read the uploaded file content
     content = await file.read()
