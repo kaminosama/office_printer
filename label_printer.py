@@ -17,9 +17,12 @@ def printer(file_path, color, printer_name="Brother_MFC-J2740DW"):
     file_name_without_suffix = os.path.split(file_path)[-1].split(".")[0]
     with tempfile.TemporaryDirectory() as tmpdirname:
         if file_path.endswith(".docx"):
+            print(f"Converting {file_path} to PDF...")
             os.system(f"libreoffice --headless --convert-to pdf {file_path} --outdir {tmpdirname}")
+            print(f"Printing {os.path.join(tmpdirname, file_name_without_suffix + '.pdf')}...")
             os.system(f"lp {os.path.join(tmpdirname, file_name_without_suffix + '.pdf')} -d {printer_name} -o ColorModel={'RGB' if color else 'Gray'}")
         elif file_path.endswith(".pdf"):
+            print(f"Printing {file_path}...")
             os.system(f"lp {file_path} -d {printer_name} -o ColorModel={'RGB' if color else 'Gray'}")
         else:
             raise ValueError(f"Invalid file type: {file_path}")
@@ -31,11 +34,11 @@ def generate_line_url(data):
 
 def print_file(file_url, color, printer_name="Brother_MFC-J2740DW"):
     if file_url.startswith("http"):
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_url)[1]) as temp_file:
             response = requests.get(file_url)
-            with open(temp_pdf.name, "wb") as f:
+            with open(temp_file.name, "wb") as f:
                 f.write(response.content)
-            printer(temp_pdf.name, color, printer_name=printer_name)
+            printer(temp_file.name, color, printer_name=printer_name)
     else:
         printer(file_url, color, printer_name=printer_name)
 

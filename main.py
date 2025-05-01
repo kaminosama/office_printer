@@ -20,7 +20,7 @@ def print_view(file_url: str, color: str = "true", printer: Union[str, None] = N
     return {"message": "PDF printed successfully"}
 
 @app.post("/print")
-async def print_view(file: UploadFile = File(...), color: str = Form("true"), printer: Union[str, None] = Form(None)):
+async def print_view_post(file: UploadFile = File(...), color: str = Form("true"), printer: Union[str, None] = Form(None)):
     printer = printer or "Brother_MFC-J2740DW"
     
     # Read the uploaded file content
