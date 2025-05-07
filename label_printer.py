@@ -34,7 +34,7 @@ def generate_line_url(data):
 
 def print_file(file_url, color, printer_name="Brother_MFC-J2740DW"):
     if file_url.startswith("http"):
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_url)[1]) as temp_file:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file_url)[1].split("?")[0]) as temp_file:
             response = requests.get(file_url)
             with open(temp_file.name, "wb") as f:
                 f.write(response.content)

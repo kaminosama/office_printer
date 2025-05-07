@@ -41,8 +41,8 @@ async def print_view_post(file: UploadFile = File(...), color: str = Form("true"
     
     try:
         print_file(temp_path, True if color == "true" else False, printer)
-        os.unlink(temp_path)  # Clean up the temporary file
         return {"message": "File printed successfully"}
     except Exception as e:
-        os.unlink(temp_path)  # Clean up the temporary file even if printing fails
         return {"error": f"Failed to print file: {str(e)}"}
+    finally:
+        os.unlink(temp_path)
